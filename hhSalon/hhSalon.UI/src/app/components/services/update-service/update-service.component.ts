@@ -1,0 +1,68 @@
+import { Component, EventEmitter, Input, OnInit, Output } from '@angular/core';
+import { Router } from '@angular/router';
+import { Group } from 'src/app/models/group';
+import { Service } from 'src/app/models/service';
+import { GroupsService } from 'src/app/services/groups.service';
+import { ServicesService } from 'src/app/services/services.service';
+import * as toastr from 'toastr';
+import { FormsModule } from '@angular/forms';
+import { NgFor } from '@angular/common';
+
+@Component({
+    selector: 'app-update-service',
+    templateUrl: './update-service.component.html',
+    styleUrls: ['./update-service.component.scss'],
+    imports: [FormsModule, NgFor]
+})
+export class UpdateServiceComponent implements OnInit{
+  @Input() service!: Service;
+  @Output() servicesUpdated = new EventEmitter<Service[]>();
+  selectedGroupName?: string | null;
+  groups: Group[] = [];
+
+
+  constructor(private groupsService: GroupsService,
+    private servicesService: ServicesService,
+    private router: Router,
+    ){
+      
+  }
+  ngOnInit(): void {
+    this.groupsService.getGroups().subscribe( (groups) => this.groups = groups );
+  }
+
+
+  updateService(service: Service){
+    let select  = document.getElementById('selectGroup') as HTMLSelectElement;
+
+       if(select){
+        this.selectedGroupName = select[select.selectedIndex].textContent;        
+    }
+
+    this.servicesService.updateService(service).subscribe({
+      next:(services) => {
+        
+        this.servicesUpdated.emit(services);
+        toastr.success('The service was updated!', 'SUCCESS', {timeOut: 5000});
+        this.router.navigate([`services/${service.groupId}/${this.selectedGroupName}`])
+
+      },
+      error:(err) => {     
+        toastr.error(err.error.message,'ERROR', {timeOut: 5000});
+      }
+  })
+   }
+
+
+   closeModal(event:any){
+    const modal = document.getElementById("myModal");
+    const closeBtn = document.getElementsByClassName('close')[0];
+    
+    if(modal && (event.target == modal || event.target == closeBtn))
+    {
+      this.servicesUpdated.emit();
+    }
+    
+  }
+
+}

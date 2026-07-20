@@ -1,0 +1,120 @@
+import { Component, OnDestroy, OnInit, Renderer2 } from '@angular/core';
+import { ActivatedRoute, Route, Router } from '@angular/router';
+import { LogLevel } from '@microsoft/signalr';
+import { ChatItem } from 'src/app/models/chatItem';
+import { AuthService } from 'src/app/services/auth.service';
+import { ChatService } from 'src/app/services/chat.service';
+import { UserStoreService } from 'src/app/services/user-store.service';
+import { UsersService } from 'src/app/services/users.service';
+import { NgFor, NgIf, NgClass, DatePipe } from '@angular/common';
+import { MessagesComponent } from '../messages/messages.component';
+import { ChatInputComponent } from '../chat-input/chat-input.component';
+import { TimeFromDatePipe } from '../../pipes/time.pipe';
+
+@Component({
+    selector: 'app-chat',
+    templateUrl: './chat.component.html',
+    styleUrls: ['./chat.component.scss'],
+    imports: [NgFor, NgIf, NgClass, MessagesComponent, ChatInputComponent, DatePipe, TimeFromDatePipe]
+})
+export class ChatComponent implements OnInit, OnDestroy{
+  toUserId: string = '';
+  toUser: any;
+
+  userId: string = '';
+
+
+  chatSelected: ChatItem = new ChatItem();
+  public now:any = new Date();
+  
+  constructor(private route: ActivatedRoute,
+    private auth: AuthService,
+    private userStore: UserStoreService,
+    public chatService: ChatService,
+    private usersService: UsersService,
+    private router: Router,
+    ){
+    }
+
+
+  ngOnInit(): void {
+      this.route.params.subscribe(params => {
+        this.toUserId = params['toUser']; 
+        
+        if(this.toUserId != ''){
+          this.usersService.getUserById(this.toUserId).subscribe(
+            user => this.toUser = user
+          )    
+          
+        }
+        else{
+          this.toUser = undefined;
+          this.chatSelected = new ChatItem();
+        }
+    })   
+
+
+   this.userStore.getIdFromStore().subscribe(
+    idValue => {
+      const idFromToken = this.auth.getIdFromToken();
+      this.userId = idValue || idFromToken;
+
+      this.chatService.getChatList(this.userId).subscribe(
+        list => {
+
+                     
+          if(this.toUserId != ''){
+
+            this.chatSelected = list.filter(l => 
+              l.toUserId === this.toUserId || l.userId === this.toUserId)[0];
+
+            this.chatService.getMessageOfUser(this.userId, this.toUserId).subscribe(
+              (messages) =>{
+                this.chatService.messages = messages;     
+              }
+             )
+
+           }
+        }
+       )
+   })        
+  } 
+
+  toUserChanged(chat: any){
+    if(chat.userId === this.userId){
+      this.toUserId = chat.toUserId;
+    }
+    else{
+      this.toUserId = chat.userId;
+    }
+
+
+     this.chatService.getMessageOfUser(this.userId, this.toUserId).subscribe(
+      (messages) =>{
+        this.chatService.messages = messages;   
+        this.chatService.updateMessages();    
+      }
+     )
+
+     this.chatSelected = chat;
+
+    this.router.navigate(['chat', this.toUserId]);
+  }
+
+
+  sendMessage(content: any){
+ 
+    let userThis:any;
+    this.usersService.getUserById(this.userId).subscribe(
+      userValue => {
+        userThis = userValue;
+        this.chatService.sendMessage(userThis, this.toUser, content);
+      }
+    )
+
+   
+  }
+
+  ngOnDestroy(): void {
+  }
+}

@@ -1,0 +1,97 @@
+<section class="auth-split auth-split--login" aria-labelledby="login-title">
+  <aside class="auth-split__visual" aria-label="hhSalon experience">
+    <div class="auth-split__visual-content">
+      <span class="auth-split__eyebrow">Karachi salon experience</span>
+      <h1>Beauty appointments, thoughtfully managed.</h1>
+      <p>Book services, manage visits and stay connected with your salon team from one elegant account.</p>
+
+      <div class="auth-split__benefits" aria-label="Account benefits">
+        <div><i class="bi bi-calendar2-check"></i><span>Easy online booking</span></div>
+        <div><i class="bi bi-shield-check"></i><span>Secure account access</span></div>
+        <div><i class="bi bi-chat-heart"></i><span>Direct specialist messaging</span></div>
+      </div>
+    </div>
+  </aside>
+
+  <div class="auth-split__form-panel">
+    <section class="auth-form-card">
+      <a class="auth-form-brand" routerLink="/" aria-label="Go to hhSalon home page">
+        <span class="auth-form-brand__mark" aria-hidden="true">✦</span>
+        <span class="auth-form-brand__copy">
+          <strong>hhSalon</strong>
+          <small>Karachi, Pakistan</small>
+        </span>
+      </a>
+
+      <header class="auth-form-card__heading">
+        <span class="hh-eyebrow">Welcome back</span>
+        <h2 id="login-title">Sign in to your account</h2>
+        <p>Use your username and password to continue.</p>
+      </header>
+
+      <form class="premium-form" [formGroup]="loginForm" (ngSubmit)="onLogin()" novalidate>
+        <div class="premium-field">
+          <label for="login-userName">Username</label>
+          <div class="premium-control">
+            <i class="bi bi-person"></i>
+            <input id="login-userName" formControlName="userName" type="text" autocomplete="username" placeholder="Enter your username">
+          </div>
+          @if (loginForm.controls.userName.touched && loginForm.controls.userName.invalid) {
+            <small class="premium-error">Username is required.</small>
+          }
+        </div>
+
+        <div class="premium-field">
+          <div class="premium-field__label-row">
+            <label for="login-password">Password</label>
+            <button class="premium-text-button" type="button" (click)="openForgotPassword()">Forgot password?</button>
+          </div>
+          <div class="premium-control">
+            <i class="bi bi-lock"></i>
+            <input id="login-password" formControlName="password" [type]="passwordVisible() ? 'text' : 'password'" autocomplete="current-password" placeholder="Enter your password">
+            <button class="premium-control__action" type="button" (click)="passwordVisible.set(!passwordVisible())" [attr.aria-label]="passwordVisible() ? 'Hide password' : 'Show password'">
+              <i class="bi" [class.bi-eye]="!passwordVisible()" [class.bi-eye-slash]="passwordVisible()"></i>
+            </button>
+          </div>
+          @if (loginForm.controls.password.touched && loginForm.controls.password.invalid) {
+            <small class="premium-error">Password is required.</small>
+          }
+        </div>
+
+        <button class="hh-button hh-button--primary premium-submit" type="submit" [disabled]="submitting()">
+          @if (submitting()) {
+            <span class="premium-spinner"></span> Signing in…
+          } @else {
+            Sign in <i class="bi bi-arrow-right"></i>
+          }
+        </button>
+      </form>
+
+      <p class="auth-form-card__footer">New to hhSalon? <a routerLink="/sign-up">Create your client account</a></p>
+    </section>
+  </div>
+</section>
+
+@if (forgotOpen()) {
+  <div class="premium-modal-backdrop" (click)="closeForgotPassword()">
+    <section class="premium-modal" role="dialog" aria-modal="true" aria-labelledby="forgot-title" (click)="$event.stopPropagation()">
+      <button class="premium-modal__close" type="button" aria-label="Close" (click)="closeForgotPassword()"><i class="bi bi-x-lg"></i></button>
+      <span class="premium-modal__icon"><i class="bi bi-envelope-heart"></i></span>
+      <h2 id="forgot-title">Reset your password</h2>
+      <p>Enter the email connected to your account and we will send a secure reset link.</p>
+      <div class="premium-field">
+        <label for="reset-email">Email address</label>
+        <div class="premium-control">
+          <i class="bi bi-envelope"></i>
+          <input id="reset-email" type="email" [formControl]="resetEmail" autocomplete="email" placeholder="name@example.com" (keydown.enter)="sendResetLink()">
+        </div>
+        @if (resetEmail.touched && resetEmail.hasError('required')) { <small class="premium-error">Email is required.</small> }
+        @if (resetEmail.touched && resetEmail.hasError('email')) { <small class="premium-error">Enter a valid email address.</small> }
+      </div>
+      <div class="premium-modal__actions">
+        <button class="hh-button hh-button--outline" type="button" (click)="closeForgotPassword()">Cancel</button>
+        <button class="hh-button hh-button--primary" type="button" [disabled]="resetSubmitting()" (click)="sendResetLink()">Send reset link</button>
+      </div>
+    </section>
+  </div>
+}

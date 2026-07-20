@@ -1,0 +1,259 @@
+# =============================================================================
+# HH Salon — Hair & Health Salon
+# ASP.NET Core 10 + Angular 22 + MySQL/MariaDB
+# =============================================================================
+
+# -----------------------------------------------------------------------------
+# Operating systems
+# -----------------------------------------------------------------------------
+.DS_Store
+.AppleDouble
+.LSOverride
+Thumbs.db
+ehthumbs.db
+Desktop.ini
+$RECYCLE.BIN/
+.Spotlight-V100/
+.Trashes/
+
+# -----------------------------------------------------------------------------
+# IDEs and editors
+# -----------------------------------------------------------------------------
+.vs/
+.vscode/
+.idea/
+*.suo
+*.user
+*.userosscache
+*.sln.docstates
+*.rsuser
+*.userprefs
+*.pidb
+*.booproj
+_ReSharper*/
+*.[Rr]e[Ss]harper
+*.DotSettings.user
+.history/
+.localhistory/
+
+# Keep repository recommendations when intentionally added
+!.vscode/extensions.json
+!.vscode/settings.example.json
+
+# -----------------------------------------------------------------------------
+# .NET build output
+# -----------------------------------------------------------------------------
+**/[Bb]in/
+**/[Oo]bj/
+**/[Dd]ebug/
+**/[Rr]elease/
+**/x64/
+**/x86/
+**/[Aa][Rr][Mm]/
+**/[Aa][Rr][Mm]64/
+artifacts/
+publish/
+*.dll
+*.exe
+*.pdb
+*.cache
+*.ilk
+*.obj
+*.iobj
+*.ipdb
+
+# NuGet
+*.nupkg
+*.snupkg
+**/[Pp]ackages/*
+!**/[Pp]ackages/build/
+*.nuget.props
+*.nuget.targets
+project.lock.json
+project.fragment.lock.json
+artifacts/
+.nuget/
+NuGetScratch/
+
+# .NET test and coverage output
+TestResults/
+**/TestResults/
+coverage/
+**/coverage/
+.coverage/
+*.trx
+*.coverage
+*.coveragexml
+*.opencover.xml
+*.cobertura.xml
+coverage.json
+coverage.info
+lcov.info
+
+# ASP.NET generated files
+**/Properties/launchSettings.local.json
+**/appsettings.Local.json
+**/appsettings.*.local.json
+**/appsettings.Development.local.json
+**/appsettings.Production.local.json
+**/secrets.json
+**/wwwroot/uploads/
+**/wwwroot/generated/
+logs/
+**/logs/
+*.log
+
+# -----------------------------------------------------------------------------
+# Angular / Node.js
+# -----------------------------------------------------------------------------
+**/node_modules/
+**/dist/
+**/.angular/
+**/.cache/
+**/.parcel-cache/
+**/.vite/
+**/.turbo/
+**/.nx/
+**/coverage/
+**/.eslintcache
+
+npm-debug.log*
+npm-error.log*
+yarn-debug.log*
+yarn-error.log*
+pnpm-debug.log*
+lerna-debug.log*
+
+# Keep lockfiles
+!**/package-lock.json
+!**/npm-shrinkwrap.json
+
+# -----------------------------------------------------------------------------
+# Environment files and secrets
+# -----------------------------------------------------------------------------
+.env
+.env.*
+!.env.example
+!.env.template
+
+*.secret
+*.secrets
+*.credentials
+credentials.json
+
+# Local development certificates and private keys
+*.pfx
+*.p12
+*.pem
+*.key
+*.crt
+*.cer
+*.der
+*.jks
+*.keystore
+certificates/
+**/certificates/
+https/
+**/https/
+
+# User Secrets are stored outside the repository, but ignore accidental exports
+user-secrets/
+**/user-secrets/
+secrets-export*.txt
+user-secrets*.txt
+
+# -----------------------------------------------------------------------------
+# Database files, dumps, and backups
+# -----------------------------------------------------------------------------
+*.bak
+*.backup
+*.dump
+*.dmp
+*.sql.gz
+*.sql.zip
+*.mdb
+*.mdf
+*.ldf
+*.db
+*.db-shm
+*.db-wal
+*.sqlite
+*.sqlite3
+
+# Keep intentional SQL source/migration scripts
+!docs/**/*.sql
+!scripts/**/*.sql
+
+# -----------------------------------------------------------------------------
+# Local backup and migration-working folders
+# -----------------------------------------------------------------------------
+_backup-*/
+**/_backup-*/
+backup-*/
+**/backup-*/
+backups/
+**/backups/
+*.before-*
+*.after-*
+*.orig
+*.rej
+*.tmp
+*.temp
+*.old
+*.old.*
+*.copy
+*.local
+
+# -----------------------------------------------------------------------------
+# Frontend local tooling
+# -----------------------------------------------------------------------------
+.angular-cache/
+.sass-cache/
+*.tsbuildinfo
+
+# -----------------------------------------------------------------------------
+# Visual Studio publish and deployment
+# -----------------------------------------------------------------------------
+*.pubxml.user
+*.publishproj
+PublishScripts/
+*.azurePubxml
+*.pubxml
+*.publish.xml
+*.deploy.cmd
+*.deploy-readme.txt
+ServiceFabricBackup/
+csx/
+*.build.csdef
+
+# -----------------------------------------------------------------------------
+# Temporary archives and generated packages
+# -----------------------------------------------------------------------------
+*.7z
+*.rar
+*.tar
+*.tar.gz
+*.tgz
+*.zip
+!docs/**/*.zip
+
+# -----------------------------------------------------------------------------
+# Runtime data
+# -----------------------------------------------------------------------------
+uploads/
+temp/
+tmp/
+sessions/
+payments-debug/
+chat-debug/
+
+# -----------------------------------------------------------------------------
+# Do not ignore repository assets
+# -----------------------------------------------------------------------------
+!.github/
+!docs/
+!docs/screenshots/
+!LICENSE
+!README.md
+!.gitattributes
+!global.json

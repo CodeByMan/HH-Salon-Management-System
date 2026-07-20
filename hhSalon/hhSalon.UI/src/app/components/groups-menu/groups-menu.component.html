@@ -1,0 +1,6 @@
+
+<ul>
+    <li class="menu__sub-link" *ngFor="let group of groups">
+      <a [routerLink]="['/services', group.id, group.name]" #link>{{ group.name }}</a>
+    </li>
+</ul>

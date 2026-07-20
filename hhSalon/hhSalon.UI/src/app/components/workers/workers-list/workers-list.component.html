@@ -1,0 +1,24 @@
+<section class="hh-page hh-page--team">
+  <div class="hh-container">
+    <header class="premium-page-header premium-page-header--light"><div><span class="hh-eyebrow">Our professionals</span><h1>Meet the hhSalon specialists</h1><p>Explore the team by expertise and connect before your next appointment.</p></div>@if (role() === 'Admin') { <a class="hh-button hh-button--primary hh-button--compact" routerLink="/worker-create"><i class="bi bi-person-plus"></i> Add specialist</a> }</header>
+
+    @if (loading()) { <div class="premium-loading"><span class="premium-spinner premium-spinner--dark"></span><p>Loading specialists…</p></div> }
+    @else if (errorMessage()) { <div class="premium-empty"><i class="bi bi-cloud-slash"></i><h2>Team unavailable</h2><p>{{ errorMessage() }}</p><button class="hh-button hh-button--outline" type="button" (click)="loadWorkers()">Try again</button></div> }
+    @else if (workers().length === 0) {
+      <div class="premium-empty premium-empty--illustrated"><i class="bi bi-people"></i><h2>No specialists have been added yet</h2><p>Workers are not part of the starter seed data. An administrator must create the first specialist and configure a schedule before clients can book appointments.</p>@if (role() === 'Admin') { <a class="hh-button hh-button--primary" routerLink="/worker-create">Create first specialist</a> }</div>
+    } @else {
+      <div class="specialist-grid">
+        @for (worker of workers(); track worker.id) {
+          <article class="specialist-card">
+            <div class="specialist-card__visual"><span>{{ initials(worker) }}</span><div class="specialist-card__availability"><i class="bi bi-calendar-check"></i> {{ worker.schedules?.length ? 'Schedule configured' : 'Schedule pending' }}</div></div>
+            <div class="specialist-card__body"><span class="premium-kicker">Salon specialist</span><h2>{{ worker.user.firstName }} {{ worker.user.lastName }}</h2><p class="specialist-card__username">&#64;{{ worker.user.userName }}</p><div class="specialist-card__skills">@for (link of worker.workers_Groups ?? []; track link.group.id) { <span>{{ link.group.name }}</span> } @empty { <span>Expertise pending</span> }</div></div>
+            <div class="specialist-card__actions">
+              @if (isAuthorized()) { <a class="hh-button hh-button--outline hh-button--compact" [routerLink]="['/chat', worker.id]"><i class="bi bi-chat-dots"></i> Message</a> } @else { <a class="hh-button hh-button--outline hh-button--compact" routerLink="/login"><i class="bi bi-box-arrow-in-right"></i> Sign in to message</a> }
+              @if (role() === 'Admin') { <a class="premium-square-button" [routerLink]="['/workers/edit', worker.id]" aria-label="Edit specialist"><i class="bi bi-pencil"></i></a><button class="premium-square-button premium-square-button--danger" type="button" [disabled]="deletingId() === worker.id" (click)="deleteWorker(worker)" aria-label="Delete specialist"><i class="bi bi-trash"></i></button> }
+            </div>
+          </article>
+        }
+      </div>
+    }
+  </div>
+</section>

@@ -1,0 +1,173 @@
+<header class="site-header" [class.site-header--scrolled]="scrolled()">
+  <div class="site-header__inner hh-container">
+    <a class="brand" routerLink="/" (click)="closeNavigation()" aria-label="hhSalon home">
+      <span class="brand__mark" aria-hidden="true">✦</span>
+      <span class="brand__name">hhSalon</span>
+    </a>
+
+    <button
+      class="site-header__toggle"
+      type="button"
+      aria-label="Toggle navigation"
+      [attr.aria-expanded]="mobileOpen()"
+      aria-controls="primary-navigation"
+      (click)="toggleMobileMenu()"
+    >
+      <span></span><span></span><span></span>
+    </button>
+
+    <nav
+      id="primary-navigation"
+      class="site-nav"
+      [class.site-nav--open]="mobileOpen()"
+      aria-label="Primary navigation"
+    >
+      <ul class="site-nav__list">
+        <li>
+          <a routerLink="/" routerLinkActive="is-active" [routerLinkActiveOptions]="{ exact: true }" (click)="closeNavigation()">Home</a>
+        </li>
+
+        <li class="site-nav__dropdown">
+          <button
+            type="button"
+            [class.is-active]="activeDropdown() === 'services'"
+            [attr.aria-expanded]="activeDropdown() === 'services'"
+            (click)="toggleDropdown('services', $event)"
+          >
+            Services <i class="bi bi-chevron-down" aria-hidden="true"></i>
+          </button>
+          @if (activeDropdown() === 'services') {
+            <div class="site-nav__menu site-nav__menu--wide">
+              <a class="site-nav__menu-heading" routerLink="/groups" (click)="closeNavigation()">
+                <span>All salon services</span>
+                <i class="bi bi-arrow-right" aria-hidden="true"></i>
+              </a>
+              <div class="site-nav__service-grid">
+                @for (group of groups(); track group.id ?? group.name) {
+                  <a [routerLink]="['/services', group.id, group.name]" (click)="closeNavigation()">
+                    <span class="site-nav__service-icon" aria-hidden="true">✦</span>
+                    {{ group.name }}
+                  </a>
+                } @empty {
+                  <a routerLink="/groups" (click)="closeNavigation()">Browse service groups</a>
+                }
+              </div>
+            </div>
+          }
+        </li>
+
+        <li><a routerLink="/workers" routerLinkActive="is-active" (click)="closeNavigation()">Specialists</a></li>
+        <li><a routerLink="/contacts" routerLinkActive="is-active" (click)="closeNavigation()">Contact</a></li>
+
+        @if (isAuthorized()) {
+          <li><a routerLink="/attendances/create" routerLinkActive="is-active" (click)="closeNavigation()">Book</a></li>
+          <li>
+            <a class="site-nav__messages" routerLink="/chat/" routerLinkActive="is-active" (click)="closeNavigation()">
+              Messages
+              @if (chatService.unreadCount > 0) {
+                <span class="site-nav__badge" [attr.aria-label]="chatService.unreadCount + ' unread messages'">{{ chatService.unreadCount }}</span>
+              }
+            </a>
+          </li>
+        }
+
+        @if (role() === 'Admin') {
+          <li class="site-nav__dropdown">
+            <button
+              type="button"
+              [class.is-active]="activeDropdown() === 'admin'"
+              [attr.aria-expanded]="activeDropdown() === 'admin'"
+              (click)="toggleDropdown('admin', $event)"
+            >
+              Manage <i class="bi bi-chevron-down" aria-hidden="true"></i>
+            </button>
+            @if (activeDropdown() === 'admin') {
+              <div class="site-nav__menu">
+                <a routerLink="/all-attendances" (click)="closeNavigation()">Appointments</a>
+                <a routerLink="/users" (click)="closeNavigation()">Clients</a>
+                <a routerLink="/workers" (click)="closeNavigation()">Workers</a>
+                <a routerLink="/groups/create" (click)="closeNavigation()">New group</a>
+                <a routerLink="/services/create" (click)="closeNavigation()">New service</a>
+                <a routerLink="/worker-create" (click)="closeNavigation()">New worker</a>
+                <a routerLink="/admin-create" (click)="closeNavigation()">New admin</a>
+              </div>
+            }
+          </li>
+        }
+
+        @if (role() === 'Worker') {
+          <li class="site-nav__dropdown">
+            <button
+              type="button"
+              [class.is-active]="activeDropdown() === 'worker'"
+              [attr.aria-expanded]="activeDropdown() === 'worker'"
+              (click)="toggleDropdown('worker', $event)"
+            >
+              Workspace <i class="bi bi-chevron-down" aria-hidden="true"></i>
+            </button>
+            @if (activeDropdown() === 'worker') {
+              <div class="site-nav__menu">
+                <a routerLink="/worker-not-rendered" (click)="closeNavigation()">Active appointments</a>
+                <a routerLink="/worker-history" (click)="closeNavigation()">History</a>
+                <a [routerLink]="['/workers/edit', userId()]" (click)="closeNavigation()">Worker profile</a>
+              </div>
+            }
+          </li>
+        }
+
+        @if (isAuthorized() && role() !== 'Worker') {
+          <li class="site-nav__dropdown site-nav__mobile-account">
+            <button
+              type="button"
+              [class.is-active]="activeDropdown() === 'appointments'"
+              [attr.aria-expanded]="activeDropdown() === 'appointments'"
+              (click)="toggleDropdown('appointments', $event)"
+            >
+              My appointments <i class="bi bi-chevron-down" aria-hidden="true"></i>
+            </button>
+            @if (activeDropdown() === 'appointments') {
+              <div class="site-nav__menu">
+                <a routerLink="/my-not-rendered-attendances" (click)="closeNavigation()">Upcoming</a>
+                <a routerLink="/my-history" (click)="closeNavigation()">History</a>
+              </div>
+            }
+          </li>
+        }
+      </ul>
+    </nav>
+
+    <div class="site-header__actions">
+      @if (!isAuthorized()) {
+        <a class="hh-button hh-button--primary hh-button--compact" routerLink="/sign-up" (click)="closeNavigation()">Join us</a>
+      } @else {
+        <div class="site-nav__dropdown account-menu">
+          <button
+            class="account-menu__trigger"
+            type="button"
+            [attr.aria-expanded]="activeDropdown() === 'account'"
+            (click)="toggleDropdown('account', $event)"
+          >
+            <span class="account-menu__avatar" aria-hidden="true">{{ (userName() || displayName()).charAt(0).toUpperCase() }}</span>
+            <span class="account-menu__copy">
+              <strong>{{ userName() || displayName() }}</strong>
+              <small>{{ role() }}</small>
+            </span>
+            <i class="bi bi-chevron-down" aria-hidden="true"></i>
+          </button>
+          @if (activeDropdown() === 'account') {
+            <div class="site-nav__menu site-nav__menu--account">
+              @if (userId()) {
+                <a [routerLink]="['/users/edit', userId()]" (click)="closeNavigation()">Profile</a>
+              }
+              @if (role() !== 'Worker') {
+                <a routerLink="/my-not-rendered-attendances" (click)="closeNavigation()">Upcoming appointments</a>
+                <a routerLink="/my-history" (click)="closeNavigation()">Appointment history</a>
+              }
+              <button type="button" (click)="signOut()">Sign out</button>
+            </div>
+          }
+        </div>
+      }
+    </div>
+  </div>
+</header>

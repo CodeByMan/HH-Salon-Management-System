@@ -1,0 +1,12 @@
+<form #messageForm="ngForm" (ngSubmit)="sendMessage()" autocomplete="off">
+    <div class="chat-input__block">
+        <div class="chat-input">
+            <input type="text" [(ngModel)]="content" name="content" required placeholder="Send message">
+        </div>
+        <div>
+            <div >
+                <button class="send" [disabled]="!messageForm.valid" type="submit">Send</button>
+            </div>
+        </div>
+    </div>
+</form>

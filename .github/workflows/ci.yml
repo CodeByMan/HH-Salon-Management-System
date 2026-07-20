@@ -1,0 +1,58 @@
+name: hhSalon CI
+
+on:
+  push:
+    branches: [ main ]
+  pull_request:
+    branches: [ main ]
+
+jobs:
+  backend:
+    runs-on: ubuntu-latest
+    services:
+      mysql:
+        image: mysql:8.4
+        env:
+          MYSQL_ROOT_PASSWORD: root-test-password
+          MYSQL_DATABASE: hhsalon_test
+        ports:
+          - 3306:3306
+        options: >-
+          --health-cmd="mysqladmin ping -h 127.0.0.1 -proot-test-password"
+          --health-interval=10s
+          --health-timeout=5s
+          --health-retries=10
+    env:
+      HH_TEST_MYSQL_CONNECTION: server=127.0.0.1;port=3306;user=root;password=root-test-password;database=hhsalon_test
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-dotnet@v4
+        with:
+          dotnet-version: 10.0.x
+      - name: Restore
+        run: dotnet restore hhSalonAPI/hhSalonAPI.sln
+      - name: Build
+        run: dotnet build hhSalonAPI/hhSalonAPI.sln --configuration Release --no-restore
+      - name: Test, including MySQL constraints
+        run: dotnet test hhSalonAPI/hhSalon.Tests/hhSalon.Tests.csproj --configuration Release --no-build --logger trx --collect:"XPlat Code Coverage"
+
+  frontend:
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: hhSalon.UI
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: npm
+          cache-dependency-path: hhSalon.UI/package-lock.json
+      - name: Install
+        run: npm ci
+      - name: Audit production dependencies
+        run: npm audit --omit=dev --audit-level=high
+      - name: Build
+        run: npm run build -- --configuration production
+      - name: Test
+        run: npm test

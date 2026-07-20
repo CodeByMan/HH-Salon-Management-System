@@ -1,0 +1,57 @@
+<section class="hh-page">
+  <div class="hh-container">
+    <header class="premium-page-header">
+      <div><span class="hh-eyebrow">Account settings</span><h1>Personal profile</h1><p>Keep your contact information accurate for appointments and salon communication.</p></div>
+      <a class="hh-button hh-button--outline hh-button--compact" routerLink="/my-history"><i class="bi bi-clock-history"></i> Appointment history</a>
+    </header>
+
+    @if (loading()) {
+      <div class="premium-loading"><span class="premium-spinner premium-spinner--dark"></span><p>Loading your profile…</p></div>
+    } @else if (errorMessage()) {
+      <div class="premium-empty"><i class="bi bi-exclamation-circle"></i><h2>Profile unavailable</h2><p>{{ errorMessage() }}</p></div>
+    } @else {
+      <div class="profile-layout">
+        <aside class="profile-summary-card">
+          <div class="profile-avatar">{{ userName().charAt(0).toUpperCase() }}</div>
+          <span class="premium-kicker">Signed-in profile</span>
+          <h2>{{ userName() }}</h2>
+          <p>Changes are saved directly to your secure hhSalon account.</p>
+          <div class="profile-security"><i class="bi bi-shield-check"></i><span>Secure password reset by email</span></div>
+        </aside>
+
+        <div class="premium-panel">
+          <div class="premium-panel__heading"><div><span class="premium-kicker">Profile details</span><h2>Contact information</h2></div><i class="bi bi-person-gear"></i></div>
+          <form class="premium-form" [formGroup]="profileForm" (ngSubmit)="save()">
+            <div class="premium-form-grid">
+              <div class="premium-field">
+                <label for="profile-firstName">First name</label>
+                <div class="premium-control"><i class="bi bi-person"></i><input id="profile-firstName" formControlName="firstName" autocomplete="given-name"></div>
+                @if (profileForm.controls.firstName.touched && profileForm.controls.firstName.invalid) { <small class="premium-error">First name is required.</small> }
+              </div>
+              <div class="premium-field">
+                <label for="profile-lastName">Last name</label>
+                <div class="premium-control"><i class="bi bi-person"></i><input id="profile-lastName" formControlName="lastName" autocomplete="family-name"></div>
+                @if (profileForm.controls.lastName.touched && profileForm.controls.lastName.invalid) { <small class="premium-error">Last name is required.</small> }
+              </div>
+              <div class="premium-field premium-field--full">
+                <label for="profile-userName">Username</label>
+                <div class="premium-control premium-control--disabled"><i class="bi bi-at"></i><input id="profile-userName" formControlName="userName"></div>
+                <small class="premium-help">Usernames are permanent account identifiers.</small>
+              </div>
+              <div class="premium-field premium-field--full">
+                <label for="profile-email">Email address</label>
+                <div class="premium-control"><i class="bi bi-envelope"></i><input id="profile-email" formControlName="email" type="email" autocomplete="email"></div>
+                @if (profileForm.controls.email.touched && profileForm.controls.email.hasError('required')) { <small class="premium-error">Email is required.</small> }
+                @if (profileForm.controls.email.touched && profileForm.controls.email.hasError('email')) { <small class="premium-error">Enter a valid email address.</small> }
+              </div>
+            </div>
+            <div class="premium-form-actions premium-form-actions--split">
+              <button class="premium-text-button premium-text-button--accent" type="button" [disabled]="sendingReset()" (click)="sendResetLink()"><i class="bi bi-key"></i> {{ sendingReset() ? 'Sending…' : 'Send password reset link' }}</button>
+              <button class="hh-button hh-button--primary" type="submit" [disabled]="saving()">{{ saving() ? 'Saving…' : 'Save profile' }}</button>
+            </div>
+          </form>
+        </div>
+      </div>
+    }
+  </div>
+</section>

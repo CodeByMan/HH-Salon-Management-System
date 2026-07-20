@@ -1,0 +1,34 @@
+<section class="hh-page hh-page--booking"><div class="hh-container">
+  <header class="premium-page-header premium-page-header--light"><div><span class="hh-eyebrow">Reservation</span><h1>Book your salon appointment</h1><p>Choose a category, treatment, specialist and available time.</p></div><a class="hh-button hh-button--outline hh-button--compact" routerLink="/my-not-rendered-attendances"><i class="bi bi-calendar2-check"></i> My appointments</a></header>
+
+  @if (loading()) { <div class="premium-loading"><span class="premium-spinner premium-spinner--dark"></span><p>Preparing the booking experience…</p></div> }
+  @else if (errorMessage() && groups().length === 0) { <div class="premium-empty"><i class="bi bi-cloud-slash"></i><h2>Booking unavailable</h2><p>{{ errorMessage() }}</p></div> }
+  @else {
+    <div class="booking-layout">
+      <form class="premium-panel premium-form booking-form" [formGroup]="bookingForm" (ngSubmit)="submit()">
+        <div class="premium-panel__heading"><div><span class="premium-kicker">Appointment details</span><h2>Design your visit</h2></div><span class="booking-step">01</span></div>
+        <div class="premium-field"><label for="booking-group">Service category</label><div class="premium-control"><i class="bi bi-grid"></i><select id="booking-group" formControlName="groupId" (change)="changeGroup(+$any($event.target).value)">@for (group of groups(); track group.id) { <option [value]="group.id">{{ group.name }}</option> }</select></div></div>
+        <div class="premium-form-grid">
+          <div class="premium-field"><label for="booking-service">Treatment</label><div class="premium-control"><i class="bi bi-scissors"></i><select id="booking-service" formControlName="serviceId">@for (service of services(); track service.id) { <option [value]="service.id">{{ service.name }}</option> }</select></div>@if (!loadingOptions() && services().length === 0) { <small class="premium-error">No services are available in this category.</small> }</div>
+          <div class="premium-field"><label for="booking-worker">Specialist</label><div class="premium-control"><i class="bi bi-person-heart"></i><select id="booking-worker" formControlName="workerId" (change)="loadSlots()"><option value="" disabled>Select specialist</option>@for (worker of workers(); track worker.id) { <option [value]="worker.id">{{ worker.firstName }} {{ worker.lastName }}</option> }</select></div>@if (!loadingOptions() && workers().length === 0) { <small class="premium-error">No specialists are configured for this category yet.</small> }</div>
+        </div>
+        <div class="premium-field"><label for="booking-date">Preferred date</label><div class="premium-control"><i class="bi bi-calendar3"></i><input id="booking-date" formControlName="date" type="date" [min]="minimumDate" (change)="loadSlots()"></div>@if (bookingForm.controls.date.touched && bookingForm.controls.date.invalid) { <small class="premium-error">Choose an appointment date.</small> }</div>
+        <div class="booking-slots"><div class="booking-slots__heading"><div><label>Available times</label><small>Times update after selecting a specialist and date.</small></div>@if (loadingSlots()) { <span class="premium-spinner premium-spinner--dark"></span> }</div>
+          @if (!bookingForm.controls.workerId.value) { <div class="booking-slots__empty"><i class="bi bi-person-plus"></i><span>Select an available specialist first.</span></div> }
+          @else if (!bookingForm.controls.date.value) { <div class="booking-slots__empty"><i class="bi bi-calendar"></i><span>Choose a date to view availability.</span></div> }
+          @else if (!loadingSlots() && slots().length === 0) { <div class="booking-slots__empty"><i class="bi bi-calendar-x"></i><span>No free times are available for this date.</span></div> }
+          @else { <div class="booking-slot-grid">@for (slot of slots(); track slot) { <button type="button" [class.is-active]="activeSlot() === slot" (click)="selectSlot(slot)">{{ slot }}</button> }</div> }
+        </div>
+        <div class="premium-form-actions"><a class="hh-button hh-button--outline" routerLink="/groups">Browse services</a><button class="hh-button hh-button--primary" type="submit" [disabled]="submitting() || workers().length === 0 || services().length === 0">{{ submitting() ? 'Booking…' : 'Confirm appointment' }}</button></div>
+      </form>
+
+      <aside class="booking-summary">
+        <span class="premium-kicker">Your selection</span><h2>Appointment summary</h2>
+        <div class="booking-summary__service"><span class="booking-summary__icon"><i class="bi bi-stars"></i></span><div><small>Selected treatment</small><strong>{{ selectedService()?.name || 'Choose a service' }}</strong></div></div>
+        <dl><div><dt>Category</dt><dd>{{ groups().find(g => g.id === +bookingForm.controls.groupId.value)?.name || '—' }}</dd></div><div><dt>Specialist</dt><dd>{{ workers().find(w => w.id === bookingForm.controls.workerId.value)?.firstName || '—' }} {{ workers().find(w => w.id === bookingForm.controls.workerId.value)?.lastName || '' }}</dd></div><div><dt>Date</dt><dd>{{ bookingForm.controls.date.value || '—' }}</dd></div><div><dt>Time</dt><dd>{{ activeSlot() || '—' }}</dd></div></dl>
+        <div class="booking-summary__total"><span>Service price</span><strong>{{ selectedService()?.price || 0 | currency:'USD':'symbol':'1.0-2' }}</strong></div>
+        @if (workers().length === 0) { <div class="booking-summary__notice"><i class="bi bi-info-circle"></i><p>Starter data includes services and prices, but not workers. Ask an administrator to create a specialist and schedule.</p></div> }
+      </aside>
+    </div>
+  }
+</div></section>

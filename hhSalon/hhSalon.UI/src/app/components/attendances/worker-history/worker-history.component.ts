@@ -1,0 +1,50 @@
+import { Component, OnInit } from '@angular/core';
+import { AttendancesService } from 'src/app/services/attendances.service';
+import { AuthService } from 'src/app/services/auth.service';
+import { UserStoreService } from 'src/app/services/user-store.service';
+import { NgFor, DatePipe } from '@angular/common';
+import { RouterLink } from '@angular/router';
+import { TimeStringPipe } from '../../../pipes/time-string.pipe';
+
+@Component({
+    selector: 'app-worker-history',
+    templateUrl: './worker-history.component.html',
+    styleUrls: ['./worker-history.component.scss'],
+    imports: [NgFor, RouterLink, DatePipe, TimeStringPipe]
+})
+export class WorkerHistoryComponent implements OnInit{
+  attendances: any[] = [];
+
+  workerId: string = "";
+  workerName: string = "";
+
+  
+  constructor(
+    private attendanceService: AttendancesService,
+     private userStore: UserStoreService,
+     private auth: AuthService
+  ){
+
+  }
+
+  ngOnInit(): void {
+    this.userStore.getIdFromStore().subscribe(
+      idValue => {
+        const idFromToken = this.auth.getIdFromToken();
+        this.workerId = idValue || idFromToken;
+      })
+
+    this.userStore.getFullNameFromStore().subscribe(
+      fullName => {
+        const fullNameFromToken = this.auth.getFullNameFromToken();
+        this.workerName = fullName || fullNameFromToken;
+      })
+
+    this.attendanceService.WorkerHistoryAttendances(this.workerId).subscribe(
+      result => {
+        this.attendances = result;
+      }
+    )    
+  }
+
+}

@@ -1,0 +1,92 @@
+<section class="auth-split auth-split--registration" aria-labelledby="signup-title">
+  <aside class="auth-split__visual" aria-label="Join hhSalon">
+    <div class="auth-split__visual-content">
+      <span class="auth-split__eyebrow">Your salon journey</span>
+      <h1>A polished experience from booking to beautiful.</h1>
+      <p>Create a client account to reserve services, review upcoming visits and connect directly with specialists.</p>
+
+      <div class="auth-split__proof" aria-label="Service catalogue summary">
+        <div><strong>25</strong><span>curated services</span></div>
+        <div><strong>6</strong><span>beauty categories</span></div>
+        <div><strong>1</strong><span>simple client portal</span></div>
+      </div>
+    </div>
+  </aside>
+
+  <div class="auth-split__form-panel">
+    <section class="auth-form-card auth-form-card--registration">
+      <a class="auth-form-brand" routerLink="/" aria-label="Go to hhSalon home page">
+        <span class="auth-form-brand__mark" aria-hidden="true">✦</span>
+        <span class="auth-form-brand__copy">
+          <strong>hhSalon</strong>
+          <small>Karachi, Pakistan</small>
+        </span>
+      </a>
+
+      <header class="auth-form-card__heading">
+        <span class="hh-eyebrow">Create client account</span>
+        <h2 id="signup-title">Join hhSalon</h2>
+        <p>Complete your details to book and manage salon appointments online.</p>
+      </header>
+
+      <form class="premium-form" [formGroup]="signUpForm" (ngSubmit)="submit()" novalidate>
+        <div class="premium-form-grid">
+          <div class="premium-field">
+            <label for="signup-firstName">First name</label>
+            <div class="premium-control"><i class="bi bi-person"></i><input id="signup-firstName" formControlName="firstName" autocomplete="given-name" placeholder="First name"></div>
+            @if (signUpForm.controls.firstName.touched && signUpForm.controls.firstName.invalid) { <small class="premium-error">First name is required.</small> }
+          </div>
+
+          <div class="premium-field">
+            <label for="signup-lastName">Last name</label>
+            <div class="premium-control"><i class="bi bi-person"></i><input id="signup-lastName" formControlName="lastName" autocomplete="family-name" placeholder="Last name"></div>
+            @if (signUpForm.controls.lastName.touched && signUpForm.controls.lastName.invalid) { <small class="premium-error">Last name is required.</small> }
+          </div>
+
+          <div class="premium-field">
+            <label for="signup-email">Email address</label>
+            <div class="premium-control"><i class="bi bi-envelope"></i><input id="signup-email" formControlName="email" type="email" autocomplete="email" placeholder="name@example.com"></div>
+            @if (signUpForm.controls.email.touched && signUpForm.controls.email.hasError('required')) { <small class="premium-error">Email is required.</small> }
+            @if (signUpForm.controls.email.touched && signUpForm.controls.email.hasError('email')) { <small class="premium-error">Enter a valid email address.</small> }
+          </div>
+
+          <div class="premium-field">
+            <label for="signup-userName">Username</label>
+            <div class="premium-control"><i class="bi bi-at"></i><input id="signup-userName" formControlName="userName" autocomplete="username" placeholder="Choose a username"></div>
+            @if (signUpForm.controls.userName.touched && signUpForm.controls.userName.invalid) { <small class="premium-error">Username is required.</small> }
+          </div>
+
+          <div class="premium-field">
+            <label for="signup-password">Password</label>
+            <div class="premium-control">
+              <i class="bi bi-lock"></i>
+              <input id="signup-password" formControlName="password" [type]="passwordVisible() ? 'text' : 'password'" autocomplete="new-password" placeholder="Create a strong password">
+              <button class="premium-control__action" type="button" (click)="passwordVisible.set(!passwordVisible())" [attr.aria-label]="passwordVisible() ? 'Hide password' : 'Show password'"><i class="bi" [class.bi-eye]="!passwordVisible()" [class.bi-eye-slash]="passwordVisible()"></i></button>
+            </div>
+            @if (signUpForm.controls.password.touched && signUpForm.controls.password.hasError('required')) { <small class="premium-error">Password is required.</small> }
+            @if (signUpForm.controls.password.touched && signUpForm.controls.password.hasError('pattern')) { <small class="premium-error">Use 8+ characters with uppercase, lowercase, number and symbol.</small> }
+          </div>
+
+          <div class="premium-field">
+            <label for="signup-confirmPassword">Confirm password</label>
+            <div class="premium-control"><i class="bi bi-shield-lock"></i><input id="signup-confirmPassword" formControlName="confirmPassword" type="password" autocomplete="new-password" placeholder="Repeat your password"></div>
+            @if (signUpForm.controls.confirmPassword.touched && signUpForm.controls.confirmPassword.hasError('required')) { <small class="premium-error">Confirm your password.</small> }
+            @if (signUpForm.controls.confirmPassword.touched && passwordMismatch) { <small class="premium-error">Passwords do not match.</small> }
+          </div>
+        </div>
+
+        <div class="password-guidance"><i class="bi bi-shield-check"></i><span>Your password is transmitted securely and is never displayed after registration.</span></div>
+
+        <button class="hh-button hh-button--primary premium-submit" type="submit" [disabled]="submitting()">
+          @if (submitting()) {
+            <span class="premium-spinner"></span> Creating account…
+          } @else {
+            Create account <i class="bi bi-arrow-right"></i>
+          }
+        </button>
+      </form>
+
+      <p class="auth-form-card__footer">Already registered? <a routerLink="/login">Sign in</a></p>
+    </section>
+  </div>
+</section>

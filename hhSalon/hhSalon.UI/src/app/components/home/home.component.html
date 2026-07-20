@@ -1,0 +1,194 @@
+<section class="hero" aria-labelledby="hero-heading">
+  <div class="hero__overlay" aria-hidden="true"></div>
+  <div class="hh-container hero__content">
+    <span class="hh-eyebrow">Beauty shaped around you</span>
+    <h1 id="hero-heading">Your best look begins with the right care.</h1>
+    <p>
+      Discover trusted salon specialists, transparent service pricing and simple online appointment booking—all in one place.
+    </p>
+    <div class="hero__actions">
+      <a class="hh-button hh-button--primary" routerLink="/attendances/create">Book appointment</a>
+      <a class="hh-button hh-button--ghost" routerLink="/groups">Explore services</a>
+    </div>
+  </div>
+
+  <div class="hero__details" aria-label="Salon details">
+    <div class="hh-container hero__details-inner">
+      <div><i class="bi bi-geo-alt" aria-hidden="true"></i><span>12 Beauty Lane, Clifton, Karachi</span></div>
+      <div><i class="bi bi-clock" aria-hidden="true"></i><span>Open daily, 10:00–20:00</span></div>
+      <a href="tel:+923000000000"><i class="bi bi-telephone" aria-hidden="true"></i><span>+92 300 000 0000</span></a>
+    </div>
+  </div>
+</section>
+
+<section #aboutSection class="about-section hh-section" aria-labelledby="about-heading">
+  <div class="hh-container about-section__grid">
+    <div class="about-section__media">
+      <img class="about-section__image about-section__image--main" src="/assets/hipstyle/img/about_us_1.png" alt="Professional salon specialist at work" />
+      <img class="about-section__image about-section__image--accent" src="/assets/hipstyle/img/about_us_2.png" alt="Detailed salon styling service" />
+      <div class="about-section__experience">
+        <strong>Care first</strong>
+        <span>Every appointment is designed around your comfort.</span>
+      </div>
+    </div>
+
+    <div class="about-section__copy">
+      <span class="hh-eyebrow">Welcome to hhSalon</span>
+      <h2 id="about-heading">Professional care with a personal touch.</h2>
+      <p>
+        hhSalon brings service discovery, specialist selection and appointment management into one polished experience. Choose the treatment that suits you, find an available specialist and manage every visit securely online.
+      </p>
+      <ul class="about-section__benefits">
+        <li><i class="bi bi-check2-circle" aria-hidden="true"></i><span>Clear services and pricing before you book</span></li>
+        <li><i class="bi bi-check2-circle" aria-hidden="true"></i><span>Availability based on real worker schedules</span></li>
+        <li><i class="bi bi-check2-circle" aria-hidden="true"></i><span>Secure account, payment and appointment history</span></li>
+      </ul>
+      <a class="hh-link-arrow" routerLink="/workers">Meet our specialists <span aria-hidden="true">→</span></a>
+    </div>
+  </div>
+</section>
+
+<section class="services-section hh-section" aria-labelledby="services-heading">
+  <div class="hh-container">
+    <header class="hh-section-heading">
+      <img src="/assets/hipstyle/img/section_tittle_icon.png" alt="" aria-hidden="true" />
+      <span class="hh-eyebrow">Our expertise</span>
+      <h2 id="services-heading">Services for every kind of self-care.</h2>
+      <p>Browse live service categories from the hhSalon catalogue and continue to current pricing and availability.</p>
+    </header>
+
+    <div class="services-grid">
+      @if (loadingGroups()) {
+        @for (item of [1, 2, 3, 4]; track item) {
+          <div class="service-card service-card--loading" aria-hidden="true"></div>
+        }
+      } @else {
+        @for (group of groups().slice(0, 4); track group.id ?? group.name; let index = $index) {
+          <article class="service-card">
+            <img
+              [src]="groupImage(group, index)"
+              [alt]="group.name + ' service category'"
+              (error)="replaceBrokenImage($event, groupFallbackImages[index % groupFallbackImages.length])"
+            />
+            <div class="service-card__overlay"></div>
+            <div class="service-card__content">
+              <span class="service-card__number">0{{ index + 1 }}</span>
+              <h3>{{ group.name }}</h3>
+              <p>View treatments, prices and booking options.</p>
+              <a [routerLink]="['/services', group.id, group.name]" [attr.aria-label]="'View ' + group.name + ' services'">
+                <i class="bi bi-arrow-up-right" aria-hidden="true"></i>
+              </a>
+            </div>
+          </article>
+        } @empty {
+          <div class="hh-empty-state">
+            <i class="bi bi-stars" aria-hidden="true"></i>
+            <h3>Service catalogue is temporarily unavailable</h3>
+            <p>Please try again after the API is running.</p>
+          </div>
+        }
+      }
+    </div>
+
+    <div class="services-section__footer">
+      <a class="hh-button hh-button--outline" routerLink="/groups">View all service groups</a>
+    </div>
+  </div>
+</section>
+
+@if (featuredServices().length) {
+  <section class="pricing-section hh-section" aria-labelledby="pricing-heading">
+    <div class="hh-container">
+      <header class="hh-section-heading hh-section-heading--left">
+        <span class="hh-eyebrow">Live catalogue</span>
+        <h2 id="pricing-heading">Popular treatments and current prices.</h2>
+        <p>Pricing below is loaded from the ASP.NET Core API.</p>
+      </header>
+
+      <div class="pricing-grid">
+        @for (service of featuredServices(); track service.id ?? service.name; let index = $index) {
+          <article class="pricing-item">
+            <img [src]="'/assets/hipstyle/img/pricing_img/pricing_img_' + ((index % 8) + 1) + '.png'" alt="" aria-hidden="true" />
+            <div class="pricing-item__copy">
+              <h3>{{ service.name }}</h3>
+              <p>Professional hhSalon treatment</p>
+            </div>
+            <strong>{{ service.price | number: '1.0-2' }}</strong>
+          </article>
+        }
+      </div>
+    </div>
+  </section>
+}
+
+<section class="booking-cta" aria-labelledby="booking-heading">
+  <div class="booking-cta__overlay" aria-hidden="true"></div>
+  <div class="hh-container booking-cta__content">
+    <span class="hh-eyebrow">Ready when you are</span>
+    <h2 id="booking-heading">Choose your service, specialist and free time slot.</h2>
+    <p>Your booking is validated against live worker schedules before it is saved.</p>
+    <a class="hh-button hh-button--primary" routerLink="/attendances/create">Start booking</a>
+  </div>
+</section>
+
+<section class="team-section hh-section" aria-labelledby="team-heading">
+  <div class="hh-container">
+    <header class="hh-section-heading">
+      <img src="/assets/hipstyle/img/section_tittle_icon.png" alt="" aria-hidden="true" />
+      <span class="hh-eyebrow">Meet the team</span>
+      <h2 id="team-heading">Specialists behind your salon experience.</h2>
+      <p>Worker profiles and specialties are loaded from the existing backend.</p>
+    </header>
+
+    <div class="team-grid">
+      @if (loadingWorkers()) {
+        @for (item of [1, 2, 3]; track item) {
+          <div class="team-card team-card--loading" aria-hidden="true"></div>
+        }
+      } @else {
+        @for (worker of workers(); track worker.id; let index = $index) {
+          <article class="team-card">
+            <div class="team-card__image-wrap">
+              <img [src]="workerImages[index % workerImages.length]" [alt]="workerName(worker)" />
+              <a [routerLink]="['/chat', worker.id]" [attr.aria-label]="'Message ' + workerName(worker)">
+                <i class="bi bi-chat-dots" aria-hidden="true"></i>
+              </a>
+            </div>
+            <div class="team-card__copy">
+              <h3>{{ workerName(worker) }}</h3>
+              <p>{{ workerSpecialties(worker) }}</p>
+            </div>
+          </article>
+        } @empty {
+          <div class="hh-empty-state">
+            <i class="bi bi-people" aria-hidden="true"></i>
+            <h3>Specialist profiles are temporarily unavailable</h3>
+            <p>Start the API to load the team.</p>
+          </div>
+        }
+      }
+    </div>
+
+    <div class="team-section__footer">
+      <a class="hh-button hh-button--outline" routerLink="/workers">View all specialists</a>
+    </div>
+  </div>
+</section>
+
+<section class="experience-section hh-section" aria-labelledby="experience-heading">
+  <div class="hh-container experience-section__grid">
+    <div class="experience-section__quote">
+      <img src="/assets/hipstyle/img/Quote.png" alt="" aria-hidden="true" />
+      <blockquote>
+        “A salon visit should feel effortless before, during and after the appointment.”
+      </blockquote>
+      <p id="experience-heading">That principle shapes the hhSalon booking experience.</p>
+    </div>
+
+    <div class="experience-section__features">
+      <article><span>01</span><h3>Discover</h3><p>Explore service groups, prices and specialist expertise.</p></article>
+      <article><span>02</span><h3>Schedule</h3><p>Select a valid date and a genuinely available time slot.</p></article>
+      <article><span>03</span><h3>Manage</h3><p>Review upcoming visits, payments, messages and history.</p></article>
+    </div>
+  </div>
+</section>

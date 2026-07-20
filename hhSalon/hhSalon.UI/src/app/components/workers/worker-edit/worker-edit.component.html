@@ -1,0 +1,84 @@
+<div class="container" style="display: flex; justify-content: center; flex-direction: column;">
+    <p class="title">Edit {{worker.userName}}</p>
+    <div class="edit-body">
+        <div>
+                <div class="input-field">
+                    <label for="firstName">First Name</label>
+                    <span class="fa fa-user"></span>
+                    <input name="firstName"  id="firstName" [(ngModel)]="worker.firstName">
+                    <span></span>
+                </div>
+                <div class="input-field">
+                    <label for="lastName">Last Name</label>
+                    <span class="fa fa-user"></span>
+                    <input [(ngModel)]="worker.lastName" type="text" placeholder="Last name">
+</div>
+                <div class="input-field">
+                    <label for="email">Email</label>
+                    <span class="fa fa-user"></span>
+                    <input [(ngModel)]="worker.email" type="text" placeholder="Email">
+</div>
+                <div class="input-field">
+                    <label for="userName">Username</label>
+                    <span class="fa fa-user"></span>
+                    <input readonly [value]="worker.userName" type="text" placeholder="User name">
+</div>
+
+                <div class="input-field">
+                    <label for="groups">Groups</label>
+                    <span class="fa fa-user"></span>
+                    <select [(ngModel)]="worker.groupsIds" multiple>
+                        <option [value]="group.id" *ngFor="let group of groups">
+                            {{ group.name }}
+                        </option>
+                    </select>
+</div>
+                <div class="input-field">
+                    <label for="address">Address</label>
+                    <span class="fa fa-user"></span>
+                    <input required [(ngModel)]="worker.address" type="text" placeholder="Address">
+                    <p *ngIf="!worker.address">
+                        *Address is required
+                    </p>
+                </div>
+
+                <div class="input-field">
+                    <label for="gender">Gender</label>
+                    <span class="fa fa-user"></span>
+                    <select [(ngModel)]="worker.gender" >
+                        <option value="Female" >
+                            Female
+                        </option>
+                        <option value="Male">
+                            Male
+                        </option>
+                    </select>
+                </div>
+
+                <div (click)="confirmToSend()" class="forget" *ngIf="auth.id === worker.id" style="font-style: oblique;">
+                    <a>Reset password</a>
+                </div>
+        </div>
+
+            <div class="schedules">
+                <div *ngFor="let schedule of worker.schedules" class="schedule">
+                    <p class="schedule-day">{{ schedule.day }} </p>
+                    <div>
+                        <label for="start">Start</label>
+                        <input style="margin-bottom: 8px" id="start" [(ngModel)]="schedule.start" type="time">    
+                    
+                        <label for="end">End</label>
+                        <input id="end" [(ngModel)]="schedule.end" type="time">
+
+                        <a (click)="resetTime(schedule)">Reset</a>
+                    </div>
+                   
+                </div>
+                
+            </div>
+            
+        </div>
+    <div style="width: 30%; margin: 0 auto;margin-top: -10px;">
+        <button class="btn" (click)="Save()">Save</button>
+    </div>
+</div>

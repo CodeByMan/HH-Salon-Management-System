@@ -1,0 +1,52 @@
+<section class="hh-page">
+  <div class="hh-container">
+    <header class="premium-page-header">
+      <div><span class="hh-eyebrow">Client portal</span><h1>Appointment history</h1><p>{{ name() || 'Your account' }} · completed and past salon visits.</p></div>
+      <a class="hh-button hh-button--primary hh-button--compact" routerLink="/attendances/create"><i class="bi bi-calendar-plus"></i> Book another visit</a>
+    </header>
+
+    <div class="premium-stat-grid premium-stat-grid--compact">
+      <article><i class="bi bi-clock-history"></i><strong>{{ attendances().length }}</strong><span>past appointments</span></article>
+      <article><i class="bi bi-shield-check"></i><strong>Private</strong><span>account-only history</span></article>
+      <article><i class="bi bi-chat-heart"></i><strong>Direct</strong><span>specialist messaging</span></article>
+    </div>
+
+    @if (loading()) {
+      <div class="premium-loading"><span class="premium-spinner premium-spinner--dark"></span><p>Loading appointment history…</p></div>
+    } @else if (errorMessage()) {
+      <div class="premium-empty"><i class="bi bi-cloud-slash"></i><h2>History unavailable</h2><p>{{ errorMessage() }}</p></div>
+    } @else if (attendances().length === 0) {
+      <div class="premium-empty"><i class="bi bi-calendar2-heart"></i><h2>No completed appointments yet</h2><p>Your completed visits will appear here after your first salon appointment.</p><a class="hh-button hh-button--primary" routerLink="/attendances/create">Book your first appointment</a></div>
+    } @else {
+      <div class="premium-table-shell">
+        <div class="premium-table-shell__heading"><div><span class="premium-kicker">Visit archive</span><h2>Past appointments</h2></div><span class="premium-count">{{ attendances().length }} records</span></div>
+        <div class="premium-table-scroll">
+          <table class="premium-table">
+            <thead><tr><th>Service</th><th>Category</th><th>Specialist</th><th>Date</th><th>Time</th><th>Contact</th></tr></thead>
+            <tbody>
+              @for (attendance of attendances(); track attendance.id) {
+                <tr>
+                  <td><strong>{{ attendance.service?.name }}</strong></td>
+                  <td>{{ attendance.group?.name }}</td>
+                  <td>{{ attendance.worker?.user?.firstName }} {{ attendance.worker?.user?.lastName }}</td>
+                  <td>{{ attendance.date | date:'mediumDate' }}</td>
+                  <td>{{ attendance.time | timeString }}</td>
+                  <td><a class="premium-icon-link" [routerLink]="['/chat', attendance.worker?.id]"><i class="bi bi-chat-dots"></i> Message</a></td>
+                </tr>
+              }
+            </tbody>
+          </table>
+        </div>
+        <div class="premium-record-list">
+          @for (attendance of attendances(); track attendance.id) {
+            <article class="premium-record-card">
+              <div class="premium-record-card__top"><span class="premium-record-icon"><i class="bi bi-scissors"></i></span><div><strong>{{ attendance.service?.name }}</strong><span>{{ attendance.group?.name }}</span></div></div>
+              <dl><div><dt>Specialist</dt><dd>{{ attendance.worker?.user?.firstName }} {{ attendance.worker?.user?.lastName }}</dd></div><div><dt>Date</dt><dd>{{ attendance.date | date:'mediumDate' }}</dd></div><div><dt>Time</dt><dd>{{ attendance.time | timeString }}</dd></div></dl>
+              <a class="hh-button hh-button--outline hh-button--compact" [routerLink]="['/chat', attendance.worker?.id]"><i class="bi bi-chat-dots"></i> Message specialist</a>
+            </article>
+          }
+        </div>
+      </div>
+    }
+  </div>
+</section>

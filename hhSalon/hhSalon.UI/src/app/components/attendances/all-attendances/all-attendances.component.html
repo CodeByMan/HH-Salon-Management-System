@@ -1,0 +1,52 @@
+<section class="hh-page">
+  <div class="hh-container">
+    <header class="premium-page-header">
+      <div><span class="hh-eyebrow">Administration</span><h1>Appointment management</h1><p>Search, review and communicate across every client appointment.</p></div>
+      <a class="hh-button hh-button--primary hh-button--compact" routerLink="/attendances/create"><i class="bi bi-calendar-plus"></i> New appointment</a>
+    </header>
+
+    <div class="premium-toolbar">
+      <label class="premium-search" for="attendance-search"><i class="bi bi-search"></i><input id="attendance-search" type="search" placeholder="Search client, service, worker or status" [value]="searchTerm()" (input)="updateSearch($any($event.target).value)"></label>
+      <div class="premium-toolbar__meta"><span><i class="bi bi-database"></i> {{ attendances().length }} records</span><span><i class="bi bi-lightning-charge"></i> Live API results</span></div>
+    </div>
+
+    @if (loading()) {
+      <div class="premium-loading"><span class="premium-spinner premium-spinner--dark"></span><p>Loading appointments…</p></div>
+    } @else if (errorMessage()) {
+      <div class="premium-empty"><i class="bi bi-cloud-slash"></i><h2>Appointments unavailable</h2><p>{{ errorMessage() }}</p></div>
+    } @else if (attendances().length === 0) {
+      <div class="premium-empty"><i class="bi bi-calendar2-x"></i><h2>{{ searchTerm() ? 'No matching appointments' : 'No appointments yet' }}</h2><p>{{ searchTerm() ? 'Try a broader search term.' : 'Appointments will appear here after clients begin booking.' }}</p></div>
+    } @else {
+      <div class="premium-table-shell premium-table-shell--wide">
+        <div class="premium-table-scroll">
+          <table class="premium-table">
+            <thead><tr><th>Client</th><th>Service</th><th>Specialist</th><th>Schedule</th><th>Payment</th><th>Rendered</th><th>Contact</th></tr></thead>
+            <tbody>
+              @for (attendance of attendances(); track attendance.id) {
+                <tr>
+                  <td><strong>{{ attendance.client?.userName }}</strong><small>{{ attendance.client?.firstName }} {{ attendance.client?.lastName }}</small></td>
+                  <td><strong>{{ attendance.service?.name }}</strong><small>{{ attendance.group?.name }}</small></td>
+                  <td>{{ attendance.worker?.user?.firstName }} {{ attendance.worker?.user?.lastName }}</td>
+                  <td><strong>{{ attendance.date | date:'mediumDate' }}</strong><small>{{ attendance.time | timeString }}</small></td>
+                  <td><span [class]="statusClass(attendance.isPaid)">{{ attendance.isPaid === 'Yes' ? 'Paid' : 'Unpaid' }}</span></td>
+                  <td><span [class]="statusClass(attendance.isRendered)">{{ attendance.isRendered === 'Yes' ? 'Complete' : 'Pending' }}</span></td>
+                  <td><a class="premium-icon-link" [routerLink]="['/chat', attendance.client?.id]"><i class="bi bi-chat-dots"></i> Message</a></td>
+                </tr>
+              }
+            </tbody>
+          </table>
+        </div>
+        <div class="premium-record-list">
+          @for (attendance of attendances(); track attendance.id) {
+            <article class="premium-record-card">
+              <div class="premium-record-card__top"><span class="premium-record-icon"><i class="bi bi-calendar-check"></i></span><div><strong>{{ attendance.service?.name }}</strong><span>{{ attendance.client?.firstName }} {{ attendance.client?.lastName }} · {{ attendance.client?.userName }}</span></div></div>
+              <dl><div><dt>Category</dt><dd>{{ attendance.group?.name }}</dd></div><div><dt>Specialist</dt><dd>{{ attendance.worker?.user?.firstName }} {{ attendance.worker?.user?.lastName }}</dd></div><div><dt>Date</dt><dd>{{ attendance.date | date:'mediumDate' }} · {{ attendance.time | timeString }}</dd></div></dl>
+              <div class="premium-record-card__statuses"><span [class]="statusClass(attendance.isPaid)">{{ attendance.isPaid === 'Yes' ? 'Paid' : 'Unpaid' }}</span><span [class]="statusClass(attendance.isRendered)">{{ attendance.isRendered === 'Yes' ? 'Complete' : 'Pending' }}</span></div>
+              <a class="hh-button hh-button--outline hh-button--compact" [routerLink]="['/chat', attendance.client?.id]"><i class="bi bi-chat-dots"></i> Message client</a>
+            </article>
+          }
+        </div>
+      </div>
+    }
+  </div>
+</section>
